@@ -1,0 +1,60 @@
+- hosts: master-nodes
+  roles:
+    - role: elastic.elasticsearch
+  vars:
+    es_enable_xpack: false
+    es_data_dirs:
+      - "/data/elasticsearch/data"
+    es_log_dir: "/data/elasticsearch/logs"
+    es_java_install: true
+    es_heap_size: "1g"
+    es_config:
+      cluster.name: "elk-cluster"
+      cluster.initial_master_nodes: "192.168.0.41:9300,192.168.0.42:9300"
+      discovery.seed_hosts: "192.168.0.41:9300,192.168.0.42:9300"
+      http.port: 9200
+      node.data: false
+      node.master: true
+      bootstrap.memory_lock: false
+      network.host: '0.0.0.0'
+      es_api_basic_auth_username: "elastic" # This is the default user created by the installation of elasticsearch
+      es_api_basic_auth_password: "changeme" # This is the default password created by the installation of elasticsearch
+      es_enable_http_ssl: true
+      es_enable_transport_ssl: true
+      es_ssl_keystore: ""
+      es_ssl_truststore: ""
+      es_ssl_keystore_password: "keystore_password"
+      es_ssl_truststore_password: "ca_password"
+      es_validate_certs: no
+    es_plugins:
+     - plugin: ingest-attachment
+
+- hosts: data-nodes
+  roles:
+    - role: elastic.elasticsearch
+  vars:
+    es_enable_xpack: false
+    es_data_dirs:
+      - "/data/elasticsearch/data"
+    es_log_dir: "/data/elasticsearch/logs"
+    es_java_install: true
+    es_config:
+      cluster.name: "elk-cluster"
+      cluster.initial_master_nodes: "192.168.0.41:9300,192.168.0.42:9300"
+      discovery.seed_hosts: "192.168.0.41:9300,192.168.0.42:9300"
+      http.port: 9200
+      node.data: true
+      node.master: false
+      bootstrap.memory_lock: false
+      network.host: '0.0.0.0'
+      es_api_basic_auth_username: "elastic" # This is the default user created by the installation of elasticsearch
+      es_api_basic_auth_password: "changeme" # This is the default password created by the installation of elasticsearch
+      es_enable_http_ssl: true
+      es_enable_transport_ssl: true
+      es_ssl_keystore: ""
+      es_ssl_truststore: ""
+      es_ssl_keystore_password: "keystore_password"
+      es_ssl_truststore_password: "ca_password"
+      es_validate_certs: no
+    es_plugins:
+      - plugin: ingest-attachment
